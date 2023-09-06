@@ -1,5 +1,5 @@
 use std::ops::Add;
-
+use std::option::Option;
 // Exercise 1
 // 实现一个Buffer<T>,Buffer只有一个成员Vec<T>
 struct Buffer<T: std::ops::Add<Output = T> + Copy> {
@@ -7,12 +7,15 @@ struct Buffer<T: std::ops::Add<Output = T> + Copy> {
 }
 // 实现sum方法,返回buffer中所有元素的和
 impl<T: Add<Output = T> + Copy> Buffer<T> {
-    fn sum(&self) -> T {
+    fn sum(&self) -> Option<T> {
+        if self.buffer.len() == 0 {
+            return None;
+        }
         let mut sum = self.buffer[0];
         for i in 1..self.buffer.len() {
             sum = sum + self.buffer[i];
         }
-        sum
+        Some(sum)
     }
 }
 
@@ -45,7 +48,7 @@ fn main() {
     let buffer = Buffer {
         buffer: vec![1, 2, 3, 4, 5],
     };
-    println!("sum: {}", buffer.sum());
+    println!("sum: {}", buffer.sum().unwrap());
     let nude = vec!['a', 'b', 'c', 'd', 'e'];
     let mut iter = nude.iter();
     // 通过闭包+迭代器生成新的Vec<char>,内容是nude中所有元素加 1
