@@ -1,11 +1,8 @@
-use std::borrow::BorrowMut;
 use std::cell::RefCell;
 use std::collections::VecDeque;
 use std::future::Future;
-use std::pin::Pin;
 use std::task::{Waker, RawWaker, Context, Poll, Wake};
 use std::task::RawWakerVTable;
-use std::time::Duration;
 use async_channel;
 use futures::FutureExt;
 use futures::future::LocalBoxFuture;
@@ -129,7 +126,7 @@ async fn demo() {
 async fn demo2(tx: async_channel::Sender<()>, rx_2: async_channel::Receiver<()>) {
     println!("Hello, world2!");
     let _ = tx.send(()).await;
-    let _ = rx_2.recv().await;
+    let _ = rx_2.recv().await; // 此处用一个rx_2来阻塞demo2，防止demo2结束，测试demo2的waker是否能被唤醒
 }
 
 fn main() {
