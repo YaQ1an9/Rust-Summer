@@ -1,0 +1,11 @@
+/Users/dn_csj/RUST/Rust-Summer/Homework/hw6/my-http/target/debug/deps/getrandom-fc1be5c9eecdc476.rmeta: /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/lib.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/error.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/util.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/error_impls.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/util_libc.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/use_file.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/macos.rs
+
+/Users/dn_csj/RUST/Rust-Summer/Homework/hw6/my-http/target/debug/deps/getrandom-fc1be5c9eecdc476.d: /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/lib.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/error.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/util.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/error_impls.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/util_libc.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/use_file.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/macos.rs
+
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/lib.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/error.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/util.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/error_impls.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/util_libc.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/use_file.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.10/src/macos.rs:

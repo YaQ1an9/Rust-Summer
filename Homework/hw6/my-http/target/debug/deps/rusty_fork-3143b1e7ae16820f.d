@@ -1,0 +1,11 @@
+/Users/dn_csj/RUST/Rust-Summer/Homework/hw6/my-http/target/debug/deps/rusty_fork-3143b1e7ae16820f.rmeta: /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/lib.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/sugar.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/fork_test.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/error.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/cmdline.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/fork.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/child_wrapper.rs
+
+/Users/dn_csj/RUST/Rust-Summer/Homework/hw6/my-http/target/debug/deps/rusty_fork-3143b1e7ae16820f.d: /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/lib.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/sugar.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/fork_test.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/error.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/cmdline.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/fork.rs /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/child_wrapper.rs
+
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/lib.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/sugar.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/fork_test.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/error.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/cmdline.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/fork.rs:
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/rusty-fork-0.3.0/src/child_wrapper.rs:

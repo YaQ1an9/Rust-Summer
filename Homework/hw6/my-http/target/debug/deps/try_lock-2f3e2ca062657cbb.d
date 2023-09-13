@@ -1,0 +1,5 @@
+/Users/dn_csj/RUST/Rust-Summer/Homework/hw6/my-http/target/debug/deps/try_lock-2f3e2ca062657cbb.rmeta: /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/try-lock-0.2.4/src/lib.rs
+
+/Users/dn_csj/RUST/Rust-Summer/Homework/hw6/my-http/target/debug/deps/try_lock-2f3e2ca062657cbb.d: /Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/try-lock-0.2.4/src/lib.rs
+
+/Users/dn_csj/.cargo/registry/src/index.crates.io-6f17d22bba15001f/try-lock-0.2.4/src/lib.rs:

@@ -1,0 +1,2 @@
+cargo:rerun-if-changed=volo.yml
+cargo:rerun-if-changed=/Users/dn_csj/RUST/Rust-Summer/Homework/hw6/my_redis/idl/my_redis.thrift
