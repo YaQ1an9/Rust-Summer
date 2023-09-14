@@ -8,7 +8,7 @@ use std::string;
 use my_redis::{LogLayer, FilterLayer, DEFAULT_ADDR};
 lazy_static! {
     static ref CLIENT: volo_gen::volo::redis::ItemServiceClient = {
-        let addr: SocketAddr = DEFAULT_ADDR.parse().unwrap();
+        let addr: SocketAddr = "127.0.0.1:1234".parse().unwrap();
         volo_gen::volo::redis::ItemServiceClientBuilder::new("my_redis")
             .layer_outer(LogLayer)
             .layer_outer(FilterLayer)
@@ -45,7 +45,6 @@ async fn handle(request: &str) {
 #[volo::main]
 async fn main() {
     tracing_subscriber::fmt::init();
-
     let stdin = io::stdin();
     for line in stdin.lock().lines() {
         let request = line.unwrap();

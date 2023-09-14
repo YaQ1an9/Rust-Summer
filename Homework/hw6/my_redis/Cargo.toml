@@ -19,6 +19,9 @@ volo = "*"
 volo-thrift = "*"
 
 volo-gen = { path = "./volo-gen" }
+toml = "0.8.0"
+serde = "1.0.188"
+async-task = "4.4.0"
 
 [profile.release]
 opt-level = 3

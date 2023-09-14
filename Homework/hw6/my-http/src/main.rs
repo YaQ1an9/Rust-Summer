@@ -17,7 +17,15 @@ type RpcClientBuilder = ItemServiceClientBuilder;
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
-    let addr: SocketAddr = DEFAULT_ADDR.parse().unwrap();
+    let args = std::env::args().collect::<Vec<String>>();
+    if args.len() != 3 {
+        println!("Args: {}", args.len());
+        println!("Usage: {} <addr>", args[0]);
+        std::process::exit(1);
+    }
+    let addr:SocketAddr = args[2].to_string().parse().unwrap();
+    println!("addr: {:?}", addr);
+    // let addr: SocketAddr = DEFAULT_ADDR.parse().unwrap();
     let rpc_cli = RpcClientBuilder::new("my_redis")
         .address(addr)
         .build();

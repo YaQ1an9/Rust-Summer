@@ -1,14 +1,76 @@
 #![feature(impl_trait_in_assoc_type)]
-
-use std::{collections::HashMap, sync::Mutex};
-
+#![feature(ascii_char)]
+use std::{collections::HashMap, sync::Mutex, fs::{OpenOptions, File}, io::{Write, BufReader, BufRead}, hash::Hash, net::SocketAddr};
+use serde::Deserialize;
 use pilota::FastStr;
 use volo_gen::volo::redis::{RedisCommand, GetItemResponse, GetItemRequest};
-
-pub struct S {
-    pub map: Mutex<HashMap<String, String>>,
-}
+mod file_op;
+use file_op::{write_to_file, update_key_value_in_file, remove_key_value_from_file};
+pub const DEFAULT_poxy: &str = "127.0.0.1:8000";
 pub const DEFAULT_ADDR: &str = "127.0.0.1:8080";
+pub enum Type {
+    Master,
+    Slave,
+}
+pub struct S {
+    pub _type: Type,
+    pub all_port: Mutex<Option<Vec<String>>>,
+    pub map: Mutex<HashMap<String, String>>,
+    pub _log_path: String,
+}
+#[derive(Debug, Deserialize, PartialEq, Hash)]
+pub struct Range {
+    pub start: u32,
+    pub end: u32,
+}
+impl Eq for Range {}
+#[derive(Debug)]
+pub struct Proxy {
+    pub proxy_addr: String,
+    pub severs_addr: Mutex<HashMap<Range, String>>,
+    pub addr_master: String,
+}
+#[volo::async_trait]
+impl volo_gen::volo::redis::ItemService for Proxy {
+    async fn get_item(
+        &self,
+        _req: volo_gen::volo::redis::GetItemRequest,
+    ) -> ::core::result::Result<volo_gen::volo::redis::GetItemResponse, ::volo_thrift::AnyhowError>
+    {
+        let cmd = &_req.clone().cmd;
+        let key: &str = &_req.clone().args.unwrap()[0].to_string();
+        let mut addr: &str = DEFAULT_ADDR;
+        if *cmd == RedisCommand::Get {
+            for item in self.severs_addr.lock().unwrap().iter() {
+                if key.as_bytes()[0] >= item.0.start as u8 && key.as_bytes()[0] <= item.0.end as u8 {
+                    let addr = item.1;
+                    break;
+                }
+            }
+        }
+        println!("SEND!");
+        println!("addr: {}", addr);
+        println!("_req: {:?}", _req);
+        let addr: SocketAddr = addr.parse().unwrap();
+        let addr = volo::net::Address::from(addr);
+        let mut client = volo_gen::volo::redis::ItemServiceClientBuilder::new("my_redis")
+            .layer_outer(LogLayer)
+            .layer_outer(FilterLayer)
+            .address(addr)
+            .build();
+        let resp = client.get_item(_req).await;
+        Ok(
+            match resp {
+                Ok(GetItemResponse { ok, data }) => {
+                    GetItemResponse { ok, data }
+                }
+                Err(_) => {
+                    GetItemResponse { ok: false, data: Some(FastStr::from("Error")) }
+                }
+            }
+        )
+    }
+}
 
 #[volo::async_trait]
 impl volo_gen::volo::redis::ItemService for S {
@@ -61,11 +123,13 @@ impl volo_gen::volo::redis::ItemService for S {
                     } else {
                         let (key, value) = (&arg[0], &arg[1]);
                         if self.map.lock().unwrap().insert(key.to_string(), value.to_string()).is_some() {
+                            update_key_value_in_file(&self._log_path, key, value).unwrap();
                             Ok(GetItemResponse { 
                                 ok: true,
                                 data: Some(FastStr::from("Ok,Updated!")) 
                             })
                         } else {
+                            write_to_file(&self._log_path, key, value).unwrap();
                             Ok(GetItemResponse { 
                                 ok: true,
                                 data: Some(FastStr::from("Ok, Insert Success!")) 
@@ -92,6 +156,7 @@ impl volo_gen::volo::redis::ItemService for S {
                     } else {
                         let mut count = 0;
                         for key in arg {
+                            remove_key_value_from_file(&self._log_path, &key).unwrap();
                             count += self.map.try_lock().unwrap().remove(&(key.to_string())).is_some() as i32;
                         }
                         Ok(GetItemResponse { 
@@ -147,6 +212,7 @@ impl volo_gen::volo::redis::ItemService for S {
         }
     }
 }
+
 
 pub struct LogLayer;
 
