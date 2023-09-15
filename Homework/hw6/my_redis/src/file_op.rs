@@ -6,7 +6,7 @@ pub fn write_to_file(file_path: &str, key: &str, value: &str) -> std::io::Result
     let mut file = OpenOptions::new()
         .append(true)
         .open(file_path)?;
-
+    // file.write_all(b"\n")?;
     // 写入键值对，并在它们之间添加空格
     file.write_all(key.as_bytes())?;
     file.write_all(b" ")?;

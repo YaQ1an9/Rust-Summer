@@ -20,10 +20,16 @@ def main():
 
     # 发送 "Get" 到客户端
     client_process.stdin.write(b"Get test2\n")
-    client_process.stdin.flush()
+    #client_process.stdin.flush()
     time.sleep(0.3)
     # 获取客户端返回的值
     output = client_process.stdout.readline().decode().strip()
+
+    x = server_process.stdout.readline().decode().strip()
+    print("server:",x)
+    x = server_process.stdout.readline().decode().strip()
+    print("server:",x)
+
     print("Output:", output)
     # 检查输出是否与前一个值一致
     if output == val:
@@ -31,17 +37,13 @@ def main():
     else:
         print("Output does not match the previous value!")
     
-    print(" ")
-    print("here is the server information:")
+    #print(" ")
+    #print("here is the server information:")
     x = client_process.stdout.readline().decode().strip()
     print(x)
     x = client_process.stdout.readline().decode().strip()
     print(x)
-    for i in range(0,12)
-        x = client_process.stdout.readline().decode().strip()
-    for i in range(0,7)
-        x = client_process.stdout.readline().decode().strip()
-        print(x)
+
 
     # 关闭服务器和客户端
     server_process.stdin.close()
