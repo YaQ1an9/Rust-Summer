@@ -10,39 +10,45 @@ use my_redis::Type;
 use toml::Value;
 use my_redis::Type::{Slave, Master};
 // use async_task::spawn;
-const Log_path: &str = "./test.log";
+const Log_path: &str = "./DataBase/test.log";
 
 #[volo::main]
 async fn main() {
     tracing_subscriber::fmt::init();
     //通过循环启动多个redis实例
     let config_path = "./Config/redis_1.conf";
+    // let config_path = "/Users/dn_csj/RUST/Rust-Summer/Homework/hw6/my_redis/Config/redis_1.conf";
     let Proxy = read_conf(config_path);
 
     let Master_addr = Proxy.addr_master.clone(); 
     let HashMap = read_log(Log_path);
 
     let addr: SocketAddr = Proxy.proxy_addr.parse().unwrap();
-    let mut tmp = Vec::new();
+    let mut all_port = Vec::new();
+    let mut slave = Vec::new();
     let mut num = Proxy.severs_addr.lock().unwrap().len();
     for value in Proxy.severs_addr.lock().unwrap().values() {
-        tmp.push(value.clone());
+        all_port.push(value.clone());
+        if value != &Master_addr {
+            slave.push(value.clone());
+        }
     }
+    println!("tmp: {:?}", all_port);
     for i in 0..num {
-        let _log_path = config_path;
-        let addr = tmp[i].clone();
+        let _log_path = Log_path.to_string();
+        let addr = all_port[i].clone();
         let mut _type = Master;
         if addr != Proxy.addr_master { _type = Slave; }
         let S = S {
             _type,
-            all_port: Mutex::new(Some(tmp.clone())),
+            _slave: Mutex::new(Some(slave.clone())),
             map: Mutex::new(HashMap.clone()),
             _log_path: _log_path.to_string(),
         };
         let addr: SocketAddr = addr.parse().unwrap();
         let addr = volo::net::Address::from(addr);
         tokio::spawn({ volo_gen::volo::redis::ItemServiceServer::new(S)
-        .layer_front(LogLayer)
+        // .layer_front(LogLayer)
         .layer_front(FilterLayer)
         .run(addr)
         });
@@ -53,7 +59,7 @@ async fn main() {
     let addr: SocketAddr = addr.parse().unwrap();
     let addr = volo::net::Address::from(addr);
     tokio::spawn( { volo_gen::volo::redis::ItemServiceServer::new(Proxy)
-    .layer_front(LogLayer)
+    // .layer_front(LogLayer)
     .layer_front(FilterLayer)
     .run(addr)
     });

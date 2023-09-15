@@ -1,20 +1,22 @@
 #![feature(impl_trait_in_assoc_type)]
 #![feature(ascii_char)]
-use std::{collections::HashMap, sync::Mutex, fs::{OpenOptions, File}, io::{Write, BufReader, BufRead}, hash::Hash, net::SocketAddr};
+// #![feature(let_chains)]
+use std::{collections::HashMap, sync::Mutex, fs::{OpenOptions, File}, io::{Write, BufReader, BufRead}, hash::Hash, net::SocketAddr, task::Poll, vec};
 use serde::Deserialize;
 use pilota::FastStr;
 use volo_gen::volo::redis::{RedisCommand, GetItemResponse, GetItemRequest};
 mod file_op;
 use file_op::{write_to_file, update_key_value_in_file, remove_key_value_from_file};
-pub const DEFAULT_poxy: &str = "127.0.0.1:8000";
+pub const DEFAULT_poxy: &str = "127.0.0.1:1234";
 pub const DEFAULT_ADDR: &str = "127.0.0.1:8080";
+#[derive(Debug, PartialEq)]
 pub enum Type {
     Master,
     Slave,
 }
 pub struct S {
     pub _type: Type,
-    pub all_port: Mutex<Option<Vec<String>>>,
+    pub _slave: Mutex<Option<Vec<String>>>,
     pub map: Mutex<HashMap<String, String>>,
     pub _log_path: String,
 }
@@ -39,22 +41,21 @@ impl volo_gen::volo::redis::ItemService for Proxy {
     {
         let cmd = &_req.clone().cmd;
         let key: &str = &_req.clone().args.unwrap()[0].to_string();
-        let mut addr: &str = DEFAULT_ADDR;
+        let mut addr = String::from(DEFAULT_ADDR);
         if *cmd == RedisCommand::Get {
             for item in self.severs_addr.lock().unwrap().iter() {
                 if key.as_bytes()[0] >= item.0.start as u8 && key.as_bytes()[0] <= item.0.end as u8 {
-                    let addr = item.1;
+                    addr = item.1.clone();
                     break;
                 }
             }
         }
-        println!("SEND!");
         println!("addr: {}", addr);
         println!("_req: {:?}", _req);
         let addr: SocketAddr = addr.parse().unwrap();
         let addr = volo::net::Address::from(addr);
         let mut client = volo_gen::volo::redis::ItemServiceClientBuilder::new("my_redis")
-            .layer_outer(LogLayer)
+            // .layer_outer(LogLayer)
             .layer_outer(FilterLayer)
             .address(addr)
             .build();
@@ -121,15 +122,34 @@ impl volo_gen::volo::redis::ItemService for S {
                             ))) 
                         })
                     } else {
+                        println!("receive set! current type is {:?}", self._type);
                         let (key, value) = (&arg[0], &arg[1]);
+                        if self._type == Type::Master {
+                            let guard = self._slave.lock().unwrap();
+                            let mut tmp_vec = Vec::new();
+                            if let Some(vec_data) = &*guard {
+                                for addr in vec_data {
+                                    tmp_vec.push(addr.clone());
+                                }
+                            }
+                            for addr in tmp_vec {
+                                let req = GetItemRequest {
+                                    cmd: RedisCommand::Set,
+                                    args: Some(vec![key.to_string().into(), value.to_string().into()]),
+                                };
+                                tokio::spawn(
+                                    async move { send_tmp(addr, req.clone()).await; }
+                                );
+                            }
+                        }
                         if self.map.lock().unwrap().insert(key.to_string(), value.to_string()).is_some() {
-                            update_key_value_in_file(&self._log_path, key, value).unwrap();
-                            Ok(GetItemResponse { 
+                            if self._type == Type::Master { update_key_value_in_file(&self._log_path, key, value).unwrap(); }
+                            Ok( GetItemResponse { 
                                 ok: true,
                                 data: Some(FastStr::from("Ok,Updated!")) 
                             })
                         } else {
-                            write_to_file(&self._log_path, key, value).unwrap();
+                            if self._type == Type::Master { write_to_file(&self._log_path, key, value).unwrap(); }
                             Ok(GetItemResponse { 
                                 ok: true,
                                 data: Some(FastStr::from("Ok, Insert Success!")) 
@@ -154,10 +174,30 @@ impl volo_gen::volo::redis::ItemService for S {
                             ))) 
                         })
                     } else {
+                        println!("receive del! current type is {:?}", self._type);
                         let mut count = 0;
+                        let _arg = arg.clone();
                         for key in arg {
-                            remove_key_value_from_file(&self._log_path, &key).unwrap();
+                            if self._type == Type::Master { remove_key_value_from_file(&self._log_path, &key).unwrap(); }
                             count += self.map.try_lock().unwrap().remove(&(key.to_string())).is_some() as i32;
+                        }
+                        if self._type == Type::Master {
+                            let guard = self._slave.lock().unwrap();
+                            let mut tmp_vec = Vec::new();
+                            if let Some(vec_data) = &*guard {
+                                for addr in vec_data {
+                                    tmp_vec.push(addr.clone());
+                                }
+                            }
+                            for addr in tmp_vec {
+                                let req = GetItemRequest {
+                                    cmd: RedisCommand::Del,
+                                    args: Some(_arg.clone()),
+                                };
+                                tokio::spawn(
+                                    async move { send_tmp(addr, req.clone()).await; }
+                                );
+                            }
                         }
                         Ok(GetItemResponse { 
                             ok: true,
@@ -274,4 +314,14 @@ where
         }
         self.0.call(cx, req).await
     }
+}
+async fn send_tmp(addr: String, _req: GetItemRequest) {
+    let addr: SocketAddr = addr.parse().unwrap();
+    let addr = volo::net::Address::from(addr);
+    let mut client = volo_gen::volo::redis::ItemServiceClientBuilder::new("test")
+        // .layer_outer(LogLayer)
+        .layer_outer(FilterLayer)
+        .address(addr)
+        .build();
+    client.get_item(_req).await.unwrap();
 }

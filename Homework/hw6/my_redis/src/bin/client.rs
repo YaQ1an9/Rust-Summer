@@ -10,7 +10,7 @@ lazy_static! {
     static ref CLIENT: volo_gen::volo::redis::ItemServiceClient = {
         let addr: SocketAddr = "127.0.0.1:1234".parse().unwrap();
         volo_gen::volo::redis::ItemServiceClientBuilder::new("my_redis")
-            .layer_outer(LogLayer)
+            // .layer_outer(LogLayer)
             .layer_outer(FilterLayer)
             .address(addr)
             .build()
